@@ -1,0 +1,100 @@
+diff --git a/.DS_Store b/.DS_Store
+new file mode 100644
+index 0000000..5f3cc31
+Binary files /dev/null and b/.DS_Store differ
+diff --git a/Makefile b/Makefile
+index af1e7a5..73b7868 100644
+--- a/Makefile
++++ b/Makefile
+@@ -150,6 +150,9 @@ UPROGS=\
+ 	$U/_forphan\
+ 	$U/_dorphan\
+ 	$U/_sync\
++	$U/_hello\
++	$U/_forkbench\
++	$U/_filetest\
+ 
+ fs.img: mkfs/mkfs README $(UPROGS)
+ 	mkfs/mkfs fs.img README $(UPROGS)
+diff --git a/user/filetest.c b/user/filetest.c
+new file mode 100644
+index 0000000..475b77d
+--- /dev/null
++++ b/user/filetest.c
+@@ -0,0 +1,26 @@
++#include "kernel/types.h"
++#include "kernel/stat.h"
++#include "user/user.h"
++#include "kernel/syscall.h"
++#include "kernel/fcntl.h"
++
++int main(){
++    char buf[64];
++    struct stat st;
++
++    int fd = open("mydata.txt", O_CREATE|O_WRONLY);
++    printf("write fd = %d\n", fd);
++
++    int n = write(fd, "hello xv6\n", 10);
++    printf("wrote bytes: %d", n);
++    close(fd);
++
++    fd = open("mydata.txt", O_RDONLY);
++    printf("read fd = %d\n", fd);
++
++    n = read(fd, buf, sizeof(buf)-1);
++    fstat(fd, &st);
++
++    close(fd);
++    exit(0);
++}
+\ No newline at end of file
+diff --git a/user/forkbench.c b/user/forkbench.c
+new file mode 100644
+index 0000000..146f7eb
+--- /dev/null
++++ b/user/forkbench.c
+@@ -0,0 +1,26 @@
++#include "kernel/types.h"
++#include "kernel/stat.h"
++#include "user/user.h"
++const int NCHILD = 5;
++const int NSTEP = 1;
++
++int main(){
++
++
++    for (int i = 0; i < NCHILD; i++){
++        int pid = fork();
++
++    if (pid == 0){
++        for (int j = 0; j < NSTEP; j++){
++            printf("child %d (pid %d): step %d\n", i, getpid(), j);
++        }
++        exit(0);
++    }
++
++    for (int i = 0; i < NCHILD; i++){
++        wait(0);
++    }
++
++}
++
++}
+\ No newline at end of file
+diff --git a/user/hello.c b/user/hello.c
+new file mode 100644
+index 0000000..a5edd73
+--- /dev/null
++++ b/user/hello.c
+@@ -0,0 +1,9 @@
++#include "kernel/types.h"
++#include "kernel/stat.h"
++#include "user/user.h"
++
++int main(){
++    printf("hello\n");
++
++    return 0;
++}
+\ No newline at end of file

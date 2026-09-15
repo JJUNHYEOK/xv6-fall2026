@@ -1,6 +1,7 @@
 #define SBRK_ERROR ((char *)-1)
 
 struct stat;
+struct sysinfo;
 
 // system calls
 int fork(void);
@@ -25,6 +26,9 @@ char *sys_sbrk(int, int);
 int pause(int);
 int uptime(void);
 int sync(void);
+int freepages(void);
+int sysinfo(struct sysinfo*);
+int pause(int);
 
 // ulib.c
 int stat(const char *, struct stat *);

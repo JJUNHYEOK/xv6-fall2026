@@ -80,3 +80,23 @@ kalloc(void)
     memset((char *)r, 5, PGSIZE); // fill with junk
   return (void *)r;
 }
+
+
+// Return the number of free pages.
+uint64 freepages(){
+  struct run *r;
+  uint64 n = 0;
+
+  acquire(&kmem.lock);
+
+  r = kmem.freelist;
+
+  while(r){
+    n += 1;
+    r = r->next;
+  }
+
+  release(&kmem.lock);
+
+  return n;
+}
